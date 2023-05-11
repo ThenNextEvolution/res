@@ -10,10 +10,10 @@
 
     
     <div  class="form-group">
-    <form action="/update/{{task.id}}" method="POST">
-        <input type="file" name ="pic">
-        <input type="text" name="content" id="content" value = {{task.content}}>
-        <input type="submit" name="update" id="update">
+    <form action="/update/{{task.id}}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" id="uppic"/>
+        <input type="text" name="content" id="content" value = {{task.content}}/>
+        <input type="submit" name="update" id="update"/>
 
     </form>
     </div>

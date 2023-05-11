@@ -1,5 +1,6 @@
 from datetime import datetime
 import os
+from pathlib import Path
 from flask import Flask, render_template, request, redirect, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -9,7 +10,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
 db =SQLAlchemy(app)
 
 
-UPLOAD_FOLDER = '/path/to/the/uploads'
+UPLOAD_FOLDER = 'C:\\Users\\eyita\\flask\\static'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 
@@ -61,14 +62,43 @@ def update(id):
         print(task.content)
         print(request.form["content"])
         task.content = request.form["content"]
-        print(task.content)
+        for filename, file in request.files.items():
+            name = request.files[filename].name
+            print(name,"kop")
+        print(request.files['file'],"kjjj")
+        if 'file' not in request.files:
+            # flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            # flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            p=Path(os.path.join('C:\\Users\\eyita\\flask\\static', filename))
+            file.save(p)
+            r= Path(request.url)
+            
+            print("saved",filename, p.parent,r.parent)
+            img = ""
+            task.store_img = "..\\static\\"+filename#os.path.join('', filename)
+            
+            # return redirect(url_for('download_file', name=filename)
+        
+        "static\\testimg202305052349598327.jpg"
+        
         try:
             
             db.session.commit()
-            return redirect("/")
+            tasks = Todo.query.order_by(Todo.data_created).all()
+            return render_template("display.html", tasks=tasks) 
+           # return redirect("/")
         except:
             return "didnt work"
-        
+         
     else:
         return render_template("update.html",task=task)
 
@@ -94,7 +124,8 @@ def upload():
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             task.store_img =url_for('download_file', name=filename)
             # return redirect(url_for('download_file', name=filename))
-    return render_template("update.html")
+    tasks = Todo.query.order_by(Todo.data_created).all()
+    return render_template("display.html", tasks=tasks)
 
 @app.route("/static\imgs\<filename>")
 def picc():
@@ -105,6 +136,7 @@ def show():
     if request.method=="GET":
         tasks = Todo.query.order_by(Todo.data_created).all()
         return render_template("display.html",tasks=tasks)
+    
 
 
 if __name__=="__main__":

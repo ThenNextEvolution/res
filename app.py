@@ -19,8 +19,9 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     content = db.Column(db.String(200), nullable = False)
-    data_created = db.Column(db.DateTime, default = datetime.utcnow)
+    data_created = db.Column(db.DateTime, default = datetime.utcnow())
     store_img = db.Column(db.Text, nullable =False, default=r"C:\\Users\\eyita\\flask\\static\\imgs\\test.jpg")
+    straddy = db.Column(db.Text)
     # img =db.Column(db.Hyperlink, default =Image.open(r"C:\\Users\\eyita\\flask\\static\\imgs\\test.jpg"))
     
     def __repr__(self):
@@ -30,7 +31,8 @@ class Todo(db.Model):
 def index():
     if request.method== "POST":
        Task_content = request.form['content']
-       new_Task = Todo(content=Task_content)
+       add = request.form["addy"]
+       new_Task = Todo(content=Task_content,straddy=add)
        
        try:
            db.session.add(new_Task)
@@ -101,7 +103,8 @@ def picc():
 @app.route("/display", methods =['GET','POST'])
 def show():
     if request.method=="GET":
-        return render_template("/display.html")
+        tasks = Todo.query.order_by(Todo.data_created).all()
+        return render_template("display.html",tasks=tasks)
 
 
 if __name__=="__main__":

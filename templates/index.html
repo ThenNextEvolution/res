@@ -5,20 +5,30 @@
 {% endblock %}
 
 {% block body %}
-<div class="content">
+<div class="content form-floating">
     <h1 style="text-align: center;">Recent Stores</h1>
     {% if tasks|length <1 %}
     <h4>NO options Avaible</h4>
     {% else %}
     <table style="align-self: center;" class="table table-dark">
         <tr>
+
+            <th>Image</th>
+            <th>img2</th>
             <th>Task</th>
             <th>Added</th>
             <th>Actions</th>
         </tr>
         {% for task in tasks %}
             <tr>
-                <td><img src={{task.store_img}}></td>
+                <td>
+                    
+                    <img  align="middle" data-holder-rendered="true" style="height: 100px; width: 20em%; display: block;" src="{{url_for('static', filename='test.jpg')}}">
+                </td>
+                <td>
+                    <img src={{task.img}}>
+                    
+                </td>
                 <td> {{task.content}} </td>
                 <td> {{task.data_created.date()}} </td>
             <td></td>
@@ -31,8 +41,12 @@
         {% endfor %}
     </table>
     {% endif %}
-    <form  class="form-group" action="/"method="POST">
-        <input type="text" name="content" id="content">
+    <form  class="form-group form-floating" action="/"method="POST">
+        
+        <input type="text" name="content" id="content" placeholder="whats the address">
+        
+        
+        <input type="text" name="addy" id="addy" placeholder="What do you have">
         <input type="submit" name="add" id="add">
 
     </form>
